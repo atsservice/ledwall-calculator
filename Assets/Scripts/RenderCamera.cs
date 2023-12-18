@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using SFB;
+using System.Runtime.InteropServices;
+
 
 public class RenderCamera : MonoBehaviour
 {
@@ -13,15 +15,12 @@ public class RenderCamera : MonoBehaviour
         
     }
 
+
     public void SavePixelMap()
     {
         if (manager.selectedScreen != null)
         {
-            string path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "");
-            //se è stata annullata l'azione di salvare un file, esci senza fare niente.
-            if (path.Length == 0)
-                return;
-            SaveRenderTextureToFile(GetComponent<Camera>().targetTexture, path, SaveTextureFileFormat.PNG);
+            DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
         }
     }
 
@@ -30,26 +29,7 @@ public class RenderCamera : MonoBehaviour
         EXR, JPG, PNG, TGA
     };
 
-    static public void SaveTexture2DToFile(Texture2D tex, string filePath, SaveTextureFileFormat fileFormat, int jpgQuality = 95)
-    {
-        switch (fileFormat)
-        {
-            case SaveTextureFileFormat.EXR:
-                System.IO.File.WriteAllBytes(filePath + ".exr", tex.EncodeToEXR());
-                break;
-            case SaveTextureFileFormat.JPG:
-                System.IO.File.WriteAllBytes(filePath + ".jpg", tex.EncodeToJPG(jpgQuality));
-                break;
-            case SaveTextureFileFormat.PNG:
-                System.IO.File.WriteAllBytes(filePath + ".png", tex.EncodeToPNG());
-                break;
-            case SaveTextureFileFormat.TGA:
-                System.IO.File.WriteAllBytes(filePath + ".tga", tex.EncodeToTGA());
-                break;
-        }
-    }
-
-    static public void SaveRenderTextureToFile(RenderTexture renderTexture, string filePath, SaveTextureFileFormat fileFormat = SaveTextureFileFormat.PNG, int jpgQuality = 95)
+    static public void DownloadRenderTexture(RenderTexture renderTexture, string filename, SaveTextureFileFormat fileFormat = SaveTextureFileFormat.PNG, int jpgQuality = 95)
     {
         Texture2D tex;
         if (fileFormat != SaveTextureFileFormat.EXR)
@@ -61,7 +41,19 @@ public class RenderCamera : MonoBehaviour
         tex.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
         tex.Apply();
         RenderTexture.active = oldRt;
-        SaveTexture2DToFile(tex, filePath, fileFormat, jpgQuality);
+
+
+        byte[] textureBytes = tex.EncodeToPNG();
+
+        if (!WebGLFileSaver.IsSavingSupported())
+        {
+            Debug.Log("cannot save file");
+        }
+        else
+        {
+            WebGLFileSaver.SaveFile(textureBytes, filename,"image/png");
+        }
+
         if (Application.isPlaying)
             Object.Destroy(tex);
         else
