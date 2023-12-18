@@ -33,4 +33,14 @@ public class ScreenMenu : MonoBehaviour
     {
         manager.selectedScreen.GetComponent<Screen>().tilePowerConsumption = float.Parse(value);
     }
+
+     public void UpdatetileSizeX(string value)
+    {
+        manager.selectedScreen.GetComponent<Screen>().tileSize.x = float.Parse(value);
+    }
+
+     public void UpdatetileSizeY(string value)
+    {
+        manager.selectedScreen.GetComponent<Screen>().tileSize.y = float.Parse(value);
+    }
 }
