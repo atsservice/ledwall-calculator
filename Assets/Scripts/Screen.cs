@@ -10,22 +10,20 @@ public class Screen : MonoBehaviour
     public Vector2 tileSize = new Vector2 (.5f, .5f);
     public Vector2 tileResolution = new Vector2 (128, 128);
     public float pitch = 3.9f;
-    public float tilePowerConsumption = 150;
-    public TMP_Text textMeshPro;
+    public float tilePowerConsumption = 150;    
     public Vector2 resolution;
     public float totalPowerConsumption;
-    int horizontalTilenumber, verticalTilenumber;
+    public int horizontalTilenumber=1, verticalTilenumber=1;
+
+    public GameObject tilePrefab;
     // Start is called before the first frame update
     void Start()
     {
+        UpdateLedwall();
     }
-
-    
-
     // Update is called once per frame
-    void Update()
-    {
-        transform.localScale = size;        
+    public void UpdateLedwall()
+    {               
         horizontalTilenumber = (int)Mathf.Ceil(size.x / tileSize.x);
         verticalTilenumber = (int)Mathf.Ceil(size.y / tileSize.y);
         tileResolution = new Vector2((int)(tileSize.x*1000 / pitch), (int)(tileSize.y*1000 / pitch));
@@ -36,21 +34,35 @@ public class Screen : MonoBehaviour
         size= new Vector2(horizontalTilenumber * tileSize.x, verticalTilenumber * tileSize.y);
         resolution = new Vector2(horizontalTilenumber * tileResolution.x, verticalTilenumber * tileResolution.y);
         totalPowerConsumption=horizontalTilenumber*verticalTilenumber * tilePowerConsumption;
-        UpdateInfo();
+
+        //update boxCollider
+        BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider.size = size;
+        boxCollider.offset = ((size-tileSize)/ 2.0f)*new Vector2(1,-1);
+                
+        RegenerateTiles();
     }
 
-    void UpdateInfo()
+    
+
+    public void RegenerateTiles()
     {
-        string s = "";
-        s += "Size:   " + size.x + " x " + size.y + " m\n";
-        s += "Pixel Pitch: " + pitch + " mm\n\n";
-        s += "Tile Size: " + tileSize.x + " x " + tileSize.y + " m\n";
-        s += "Tile Resolution: " + tileResolution.x + " x " + tileResolution.y + " px\n";
-        s += "Tile Number: " + horizontalTilenumber + " x " + verticalTilenumber + "\n";
-        s += "Tile Power Consumption: " + tilePowerConsumption + " W\n\n";
-        s += "Total Pixel Resolution: " + resolution.x + " x " + resolution.y + " px\n";
-        s += "Total Power Consumption: " + totalPowerConsumption+" W";
-        textMeshPro.text = s;    
-        textMeshPro.transform.localScale = new Vector3(1 / transform.localScale.x, 1 / transform.localScale.y, 1)/100;
+        Transform screenTiles = transform.Find("ScreenTiles");
+        foreach (Transform child in screenTiles)
+        {
+            Destroy(child.gameObject);
+        }        
+        for (int i = 0; i < horizontalTilenumber; i++)
+        {
+            for (int j = 0; j < verticalTilenumber; j++)
+            {
+                GameObject tile = Instantiate(tilePrefab, screenTiles);
+                tile.transform.localPosition = new Vector3(i * tileSize.x, -j * tileSize.y, 0);
+                tile.transform.localScale = tileSize;
+                float actualHue = ((i+j)%5)/5.0f;
+                tile.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
+                tile.GetComponentInChildren<TMP_Text>().text = i + "," + j;
+            }
+        }
     }
 }
