@@ -237,8 +237,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 0.5, y: 0.5}
   tileSize: {x: 0.5, y: 0.5}
-  pitch: 0
-  tilePowerConsumption: 0
+  tileResolution: {x: 128, y: 128}
+  pitch: 3.9
+  tilePowerConsumption: 150
   textMeshPro: {fileID: 4563682856216681888}
   resolution: {x: 0, y: 0}
   totalPowerConsumption: 0

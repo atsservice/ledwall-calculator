@@ -8,8 +8,9 @@ public class Screen : MonoBehaviour
 {
     public Vector2 size = new Vector2 (.5f, .5f);
     public Vector2 tileSize = new Vector2 (.5f, .5f);
-    public Vector2 tileResolution;
-    public float pitch, tilePowerConsumption;
+    public Vector2 tileResolution = new Vector2 (128, 128);
+    public float pitch = 3.9f;
+    public float tilePowerConsumption = 150;
     public TMP_Text textMeshPro;
     public Vector2 resolution;
     public float totalPowerConsumption;
@@ -19,13 +20,17 @@ public class Screen : MonoBehaviour
     {
     }
 
+    
+
     // Update is called once per frame
     void Update()
     {
         transform.localScale = size;        
-        horizontalTilenumber = (int)(size.x / tileSize.x);
-        verticalTilenumber = (int)(size.y / tileSize.y);
+        horizontalTilenumber = (int)Mathf.Ceil(size.x / tileSize.x);
+        verticalTilenumber = (int)Mathf.Ceil(size.y / tileSize.y);
         tileResolution = new Vector2((int)(tileSize.x*1000 / pitch), (int)(tileSize.y*1000 / pitch));
+        //risolve il problema di una mattonella 0,5 x 1.0 mt dividendo per 2 la risoluzione, arrotondando ad un ntero e moltiplicando di nuovo per 2
+        tileResolution= new Vector2((int)(tileResolution.x/2)*2, (int)(tileResolution.y/2)*2);
         
         //forza il ledwall ad una dimensione corretta
         size= new Vector2(horizontalTilenumber * tileSize.x, verticalTilenumber * tileSize.y);
