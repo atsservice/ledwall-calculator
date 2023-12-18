@@ -1,0 +1,9 @@
+.vsconfig
+.vs/
+Assembly-CSharp.csproj
+Library
+Logs
+obj
+ledwall-calculator.sln
+Temp
+UserSettings
