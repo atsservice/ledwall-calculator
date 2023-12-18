@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,6 +12,8 @@ public class Manager : MonoBehaviour
 
     public GameObject selectedScreen { get; private set; }
 
+    Vector2 mouseOldPosition, startClick;
+
     public void Start()
     {
         CloseScreenMenu();
@@ -20,6 +23,8 @@ public class Manager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            startClick = Input.mousePosition;
+            mouseOldPosition = startClick;
             if (EventSystem.current.IsPointerOverGameObject())
             {
                 return;
@@ -36,9 +41,32 @@ public class Manager : MonoBehaviour
                 }
             }
         }
-        if (selectedScreen == null)
+
+        if (Input.GetMouseButton(0))
         {
-            CloseScreenMenu();
+            Vector2 mouseDelta = (Vector2)Input.mousePosition - mouseOldPosition;
+            Camera.main.transform.Translate(-mouseDelta * Camera.main.orthographicSize / 1000);
+            mouseOldPosition = Input.mousePosition;
+        }
+
+        if (Input.mouseScrollDelta.y != 0)
+        {
+            Camera.main.orthographicSize -= Input.mouseScrollDelta.y;
+            if (Camera.main.orthographicSize < 1)
+            {
+                Camera.main.orthographicSize = 1;
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (startClick == (Vector2)Input.mousePosition)
+            {
+                if (selectedScreen == null)
+                {
+                    CloseScreenMenu();
+                }
+            }
         }
     }
 

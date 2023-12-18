@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 17081564}
   - component: {fileID: 17081563}
   m_Layer: 5
-  m_Name: tileDimensionY
+  m_Name: tileSizeY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 21325577}
         m_TargetAssemblyTypeName: ScreenMenu, Assembly-CSharp
-        m_MethodName: UpdatePower
+        m_MethodName: UpdatetileSizeY
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -773,7 +773,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tile dimension Y...
+  m_text: Tile size Y...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2586,7 +2586,7 @@ GameObject:
   - component: {fileID: 1021735356}
   - component: {fileID: 1021735355}
   m_Layer: 5
-  m_Name: tileDimensionX
+  m_Name: tileSizeX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2676,7 +2676,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 21325577}
         m_TargetAssemblyTypeName: ScreenMenu, Assembly-CSharp
-        m_MethodName: UpdatePower
+        m_MethodName: UpdatetileSizeX
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4351,7 +4351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tile dimension X...
+  m_text: Tile size X...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
