@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Tilemaps;
+using System.Globalization;
 
 public class ScreenMenu : MonoBehaviour
 {
@@ -86,14 +87,14 @@ public class ScreenMenu : MonoBehaviour
     public string ValidateValue(string value, bool validateInteger=false)
     {
         value = value.Trim();
-        value = value.Replace('.', ',');
+        value = value.Replace(',', '.');
         if (string.IsNullOrEmpty(value))
         {
             return null;
         }
         bool commaFound = validateInteger;
         foreach (char c in value) {
-            if (c == ',')
+            if (c == '.')
             {
                 if (commaFound)
                 {
@@ -101,7 +102,7 @@ public class ScreenMenu : MonoBehaviour
                 }
                 commaFound = true;
             }
-            if (!"1234567890,".Contains(c)) { 
+            if (!"1234567890.".Contains(c)) { 
                 return null;
             }
         }
@@ -118,7 +119,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
         
-        float sizeX = float.Parse(value);
+        float sizeX = float.Parse(value,CultureInfo.InvariantCulture);
         sizeX = (int)(sizeX / (screen.tileSize.x)) * (screen.tileSize.x);
         screen.size.x = sizeX;
         screen.UpdateLedwall();
@@ -133,7 +134,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
         
-        float sizeY = float.Parse(value);
+        float sizeY = float.Parse(value,CultureInfo.InvariantCulture);
         sizeY = (int)(sizeY / (screen.tileSize.y)) * (screen.tileSize.y);
         screen.size.y = sizeY;
         screen.UpdateLedwall();
@@ -148,7 +149,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value);        
+        manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value,CultureInfo.InvariantCulture);   
         screen.tileResolution = new Vector2((int)(screen.tileSize.x * 1000 / screen.pitch), (int)(screen.tileSize.y * 1000 / screen.pitch));
         screen.UpdateLedwall();
     }
@@ -162,7 +163,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
         
-        screen.tilePowerConsumption = float.Parse(value);
+        screen.tilePowerConsumption = float.Parse(value,CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
     }
 
@@ -176,7 +177,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
         
-        screen.tileSize.x = float.Parse(value);
+        screen.tileSize.x = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.x = screen.tileSize.x * 1000 / screen.pitch;
         screen.UpdateLedwall();
     }
@@ -191,7 +192,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
         
-        screen.tileSize.y = float.Parse(value);
+        screen.tileSize.y = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.y = screen.tileSize.y * 1000 / screen.pitch;
         screen.UpdateLedwall();
     }
@@ -206,7 +207,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        screen.startPosition.x=float.Parse(value);
+        screen.startPosition.x=float.Parse(value,CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
     }
 
@@ -220,7 +221,7 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        screen.startPosition.y = float.Parse(value);
+        screen.startPosition.y = float.Parse(value,CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
     }
 }
