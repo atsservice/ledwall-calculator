@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Tilemaps;
 using System.Globalization;
+using UnityEngine.Rendering;
 
 public class ScreenMenu : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class ScreenMenu : MonoBehaviour
     public TMP_Text textMeshPro;
 
     public TMP_Dropdown dropdownSelectScreen;
+
+    public GameObject buttonDelete;
     public void LoadData(Screen screen)
     {
         inputFieldSizeX.text = screen.size.x.ToString();
@@ -26,6 +29,9 @@ public class ScreenMenu : MonoBehaviour
         inputFieldStartX.text = screen.startPosition.x.ToString();
         inputFieldStartY.text = screen.startPosition.y.ToString();
         UpdateInfo(screen);
+        buttonDelete.SetActive(true);
+        int i = manager.screens.IndexOf(screen) + 1;
+        dropdownSelectScreen.value=i;
     }
 
     public void UnloadData()
@@ -39,6 +45,8 @@ public class ScreenMenu : MonoBehaviour
         inputFieldStartX.text = "";
         inputFieldStartY.text = "";
         textMeshPro.text = "";
+        buttonDelete.SetActive(false);
+        dropdownSelectScreen.value=0;
     }
 
     private void Update()
@@ -245,8 +253,18 @@ public class ScreenMenu : MonoBehaviour
         UpdateInfo(screen);
     }
 
-    public void AddScreen(string name)
+    public void AddScreen(int i)
     {
-        dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = name });
+        dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = "screen " + i });
+    }
+    public void RemoveScreen(int newSize)
+    {
+        string elementZero = dropdownSelectScreen.options[0].text;
+        dropdownSelectScreen.options.Clear();
+        dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = elementZero });
+        for (int i = 0; i < newSize; i++)
+        {
+            dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = "screen " + (i+1) });
+        }
     }
 }

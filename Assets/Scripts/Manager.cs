@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Windows.Forms;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -22,9 +23,10 @@ public class Manager : MonoBehaviour
     public View VIEW = View.Pixelmap;
 
     public List<Screen> screens = new List<Screen>();
-    
 
-    
+    public void Start(){
+        screenMenu.UnloadData();
+    }
 
     public void Update()
     {
@@ -50,7 +52,7 @@ public class Manager : MonoBehaviour
                 if (hit.transform.gameObject.GetComponent<Screen>() != null)
                 {
                     selectedScreen = hit.transform.gameObject;
-                    screenMenu.LoadData(selectedScreen.GetComponent<Screen>());
+                    screenMenu.LoadData(selectedScreen.GetComponent<Screen>());                    
                 }
             }
         }
@@ -89,11 +91,24 @@ public class Manager : MonoBehaviour
         screen.transform.localPosition = Vector3.zero;
 
         screens.Add(screen.GetComponent<Screen>());
-        selectedScreen=screen;
+        selectedScreen = screen;
+        screenMenu.AddScreen(screens.Count);
         screenMenu.LoadData(screen.GetComponent<Screen>());
-        screenMenu.AddScreen("screen " + screens.Count);
     }
-    
+
+    public void DeleteScreen()
+    {
+        if (selectedScreen == null)
+        {
+            return;
+        }
+        Screen screen = selectedScreen.GetComponent<Screen>();
+        screens.Remove(screen);
+        screenMenu.RemoveScreen(screens.Count);
+        Destroy(selectedScreen);
+        SelectScreen(0);
+    }
+
     public void ChangeView(int value)
     {
         Debug.Log(value);
