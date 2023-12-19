@@ -14,7 +14,7 @@ public class Screen : MonoBehaviour
     public Vector2 resolution;
     public float totalPowerConsumption;
     public int horizontalTilenumber=1, verticalTilenumber=1;
-
+    public Vector2 startPosition;
     public GameObject tilePrefab;
     // Start is called before the first frame update
     void Start()
@@ -39,6 +39,9 @@ public class Screen : MonoBehaviour
         BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
         boxCollider.size = size;
         boxCollider.offset = ((size-tileSize)/ 2.0f)*new Vector2(1,-1);
+
+        //update startPosition
+        transform.position = new Vector3(startPosition.x / 1000.0f * pitch, -startPosition.y / 1000.0f * pitch, 0);
                 
         RegenerateTiles();
     }

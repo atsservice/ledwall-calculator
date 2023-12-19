@@ -10,7 +10,7 @@ using UnityEngine.Tilemaps;
 public class ScreenMenu : MonoBehaviour
 {
     public Manager manager;
-    public TMP_InputField inputFieldSizeX, inputFieldSizeY, inputFieldPitch, inputFieldPower, inputFieldTileSizeX, inputFieldTileSizeY;
+    public TMP_InputField inputFieldSizeX, inputFieldSizeY, inputFieldPitch, inputFieldPower, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldStartX, inputFieldStartY;
     public TMP_Text textMeshPro;
 
     private void OnEnable()
@@ -22,7 +22,8 @@ public class ScreenMenu : MonoBehaviour
         inputFieldPower.text = screen.tilePowerConsumption.ToString();
         inputFieldTileSizeX.text = screen.tileSize.x.ToString();
         inputFieldTileSizeY.text = screen.tileSize.y.ToString();
-
+        inputFieldStartX.text = screen.startPosition.x.ToString();
+        inputFieldStartY.text = screen.startPosition.y.ToString();
         UpdateInfo();
     }
 
@@ -31,7 +32,7 @@ public class ScreenMenu : MonoBehaviour
         //cicla tra gli TMP_InputField quando premo TAB, cambiando il focus da uno all'altro        
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            TMP_InputField[] selectableInputFields = { inputFieldSizeX, inputFieldSizeY, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldPitch, inputFieldPower };
+            TMP_InputField[] selectableInputFields = { inputFieldSizeX, inputFieldSizeY, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldPitch, inputFieldPower, inputFieldStartX, inputFieldStartY};
             int selected = -1;
             for (int i = 0; i < selectableInputFields.Length; i++)
             {
@@ -74,6 +75,7 @@ public class ScreenMenu : MonoBehaviour
         s += "Pixel Pitch: " + screen.pitch + " mm\n\n";
         s += "Tile Size: " + screen.tileSize.x + " x " + screen.tileSize.y + " m\n";
         s += "Tile Resolution: " + screen.tileResolution.x + " x " + screen.tileResolution.y + " px\n";
+        s += "Start Position: " + screen.startPosition.x + " x " + screen.startPosition.y + " px\n";
         s += "Tile Number: " + screen.horizontalTilenumber + " x " + screen.verticalTilenumber + "\n";
         s += "Tile Power Consumption: " + screen.tilePowerConsumption + " W\n\n";
         s += "Total Pixel Resolution: " + screen.resolution.x + " x " + screen.resolution.y + " px\n";
@@ -81,7 +83,7 @@ public class ScreenMenu : MonoBehaviour
         textMeshPro.text = s;        
     }
 
-    public string ValidateValue(string value)
+    public string ValidateValue(string value, bool validateInteger=false)
     {
         value = value.Trim();
         value = value.Replace('.', ',');
@@ -89,7 +91,7 @@ public class ScreenMenu : MonoBehaviour
         {
             return null;
         }
-        bool commaFound = false;
+        bool commaFound = validateInteger;
         foreach (char c in value) {
             if (c == ',')
             {
@@ -191,6 +193,34 @@ public class ScreenMenu : MonoBehaviour
         
         screen.tileSize.y = float.Parse(value);
         screen.tileResolution.y = screen.tileSize.y * 1000 / screen.pitch;
+        screen.UpdateLedwall();
+    }
+
+    public void UpdateStartX(string value)
+    {
+        Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value, true);
+        if (value == null)
+        {
+            inputFieldStartX.text = screen.startPosition.x.ToString();
+            return;
+        }
+
+        screen.startPosition.x=float.Parse(value);
+        screen.UpdateLedwall();
+    }
+
+    public void UpdateStartY(string value)
+    {
+        Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value, true);
+        if (value == null)
+        {
+            inputFieldStartY.text = screen.startPosition.y.ToString();
+            return;
+        }
+
+        screen.startPosition.y = float.Parse(value);
         screen.UpdateLedwall();
     }
 }
