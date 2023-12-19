@@ -4,6 +4,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+public enum View
+{
+    Pixelmap,
+    Power,
+    Signal
+}
+
 public class Manager : MonoBehaviour
 {
     public GameObject screenPrefab;
@@ -14,6 +21,11 @@ public class Manager : MonoBehaviour
 
     Vector2 mouseOldPosition, startClick;
 
+    public View VIEW = View.Pixelmap;
+
+    List<Screen> screens = new List<Screen>();
+    
+
     public void Start()
     {
         CloseScreenMenu();
@@ -21,6 +33,11 @@ public class Manager : MonoBehaviour
 
     public void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseScreenMenu();
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             startClick = Input.mousePosition;
@@ -74,6 +91,8 @@ public class Manager : MonoBehaviour
     {
         GameObject screen = Instantiate(screenPrefab);
         screen.transform.localPosition = Vector3.zero;
+
+        screens.Add(screen.GetComponent<Screen>());
     }
 
     void OpenScreenMenu()
@@ -85,5 +104,14 @@ public class Manager : MonoBehaviour
     void CloseScreenMenu()
     {
         screenMenu.SetActive(false);
+    }
+
+    public void ChangeView(int value)
+    {
+        VIEW = (View)value;
+        foreach (Screen screen in screens)
+        {
+            screen.RegenerateTiles();
+        }
     }
 }

@@ -86,7 +86,11 @@ MonoBehaviour:
   totalPowerConsumption: 0
   horizontalTilenumber: 1
   verticalTilenumber: 1
+  startPosition: {x: 0, y: 0}
   tilePrefab: {fileID: 1711909368992771293, guid: 90f0a884031cd554a861b802f6322d4a, type: 3}
+  manager: {fileID: 0}
+  maxTilesPerPowerLine: 16
+  maxTilesPerSignalLine: 40
 --- !u!61 &7725299587811674442
 BoxCollider2D:
   m_ObjectHideFlags: 0
