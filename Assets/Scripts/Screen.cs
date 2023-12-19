@@ -90,6 +90,7 @@ public class Screen : MonoBehaviour
 
         if (manager.VIEW == View.Power)
         {
+            maxTilesPerPowerLine = 16/(int)(tileSize.x*tileSize.y*4);
             //calcolo linee di corrrente mettendo al massimo 'maxTilesPerPowerLine' per linea e arrotondando per eccesso
             int numberOfPowerLines = (int)Mathf.Ceil(horizontalTilenumber * verticalTilenumber / (float)maxTilesPerPowerLine);
             //arrotondo il numero di powerLines in modo che siano sempre un multiplo di 3
@@ -155,6 +156,7 @@ public class Screen : MonoBehaviour
 
         if (manager.VIEW == View.Signal)
         {
+            maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
             int horizontallines = maxTilesPerSignalLine / horizontalTilenumber;
             horizontallines = (int)Mathf.Ceil(verticalTilenumber / (float)horizontallines);
 
