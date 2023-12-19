@@ -18,20 +18,33 @@ public class RenderCamera : MonoBehaviour
 
     public void SavePixelMap()
     {
-        if (manager.screens.Count==0)
+        if (manager.screens.Count == 0)
         {
             return;
         }
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        UpdateCamera();
+
+        DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
+
+    }
+    static public void SaveTexture2DToFile(Texture2D tex, string filePath, SaveTextureFileFormat fileFormat, int jpgQuality = 95)
+    {
+        switch (fileFormat)
         {
-            DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
-        }
-        else
-        {
-            string path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "png");
+            case SaveTextureFileFormat.EXR:
+                System.IO.File.WriteAllBytes(filePath + ".exr", tex.EncodeToEXR());
+                break;
+            case SaveTextureFileFormat.JPG:
+                System.IO.File.WriteAllBytes(filePath + ".jpg", tex.EncodeToJPG(jpgQuality));
+                break;
+            case SaveTextureFileFormat.PNG:
+                System.IO.File.WriteAllBytes(filePath + ".png", tex.EncodeToPNG());
+                break;
+            case SaveTextureFileFormat.TGA:
+                System.IO.File.WriteAllBytes(filePath + ".tga", tex.EncodeToTGA());
+                break;
         }
     }
-
 
     public enum SaveTextureFileFormat
     {
@@ -52,15 +65,19 @@ public class RenderCamera : MonoBehaviour
         RenderTexture.active = oldRt;
 
 
-        byte[] textureBytes = tex.EncodeToPNG();
-
-        if (!WebGLFileSaver.IsSavingSupported())
+        if (Application.platform != RuntimePlatform.WebGLPlayer)
+        {
+            string path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "png");
+            SaveTexture2DToFile(tex, path, fileFormat, jpgQuality);
+        }
+        else if (!WebGLFileSaver.IsSavingSupported())
         {
             Debug.Log("cannot save file");
         }
         else
         {
-            WebGLFileSaver.SaveFile(textureBytes, filename,"image/png");
+            byte[] textureBytes = tex.EncodeToPNG();
+            WebGLFileSaver.SaveFile(textureBytes, filename, "image/png");
         }
 
         if (Application.isPlaying)
@@ -71,22 +88,20 @@ public class RenderCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void UpdateCamera()
     {
-        if (manager.selectedScreen != null)
+        Screen screen = manager.screens[0].GetComponent<Screen>();
+        float centerX = screen.transform.position.x - screen.tileSize.x / 2.0f;
+        float centerY = screen.transform.position.y + screen.tileSize.y / 2.0f;
+        centerX += screen.size.x / 2.0f;
+        centerY -= screen.size.y / 2.0f;
+        transform.position = new Vector3(centerX, centerY, -10);
+        if (GetComponent<Camera>().targetTexture != null)
         {
-            Screen screen = manager.selectedScreen.GetComponent<Screen>();
-            float centerX = manager.selectedScreen.transform.position.x-screen.tileSize.x/2.0f;
-            float centerY = manager.selectedScreen.transform.position.y+screen.tileSize.y/2.0f;
-            centerX += screen.size.x / 2.0f;
-            centerY -= screen.size.y / 2.0f;
-            transform.position = new Vector3(centerX, centerY, -10);
-            if (GetComponent<Camera>().targetTexture != null)
-            {
-                GetComponent<Camera>().targetTexture.Release();
-            }
-            GetComponent<Camera>().orthographicSize = .5f * screen.size.y;
-            GetComponent<Camera>().targetTexture = new RenderTexture((int)screen.resolution.x, (int) screen.resolution.y,24);
+            GetComponent<Camera>().targetTexture.Release();
         }
+        GetComponent<Camera>().orthographicSize = .5f * screen.size.y;
+        GetComponent<Camera>().targetTexture = new RenderTexture((int)screen.resolution.x, (int)screen.resolution.y, 24);
     }
+
 }

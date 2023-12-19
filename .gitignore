@@ -10,3 +10,5 @@ Temp
 UserSettings
 .DS_Store
 *.csproj
+
+.fake
