@@ -2003,6 +2003,7 @@ MonoBehaviour:
   screenPrefab: {fileID: 6217908399861375073, guid: 97b170268411d8e46aa57bd69ef5fdcc, type: 3}
   screenMenu: {fileID: 21325572}
   VIEW: 0
+  screens: []
 --- !u!4 &432463219
 Transform:
   m_ObjectHideFlags: 0
@@ -2486,7 +2487,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.0710217, g: 0.087427296, b: 0.11320752, a: 0}
+  m_BackGroundColor: {r: 0.11792451, g: 0.4524765, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
