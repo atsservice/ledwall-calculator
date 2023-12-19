@@ -26,6 +26,46 @@ public class ScreenMenu : MonoBehaviour
         UpdateInfo();
     }
 
+    private void Update()
+    {
+        //cicla tra gli TMP_InputField quando premo TAB, cambiando il focus da uno all'altro        
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            TMP_InputField[] selectableInputFields = { inputFieldSizeX, inputFieldSizeY, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldPitch, inputFieldPower };
+            int selected = -1;
+            for (int i = 0; i < selectableInputFields.Length; i++)
+            {
+                if (selectableInputFields[i].isFocused)
+                {
+                    selected = i;
+                    break;
+                }
+            }
+            if (selected == -1)
+            {
+                return;
+            }
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+            {
+                selected--;
+                if (selected < 0)
+                {
+                    selected = selectableInputFields.Length - 1;
+                }
+            }
+            else
+            {
+                selected++;
+                if (selected >= selectableInputFields.Length)
+                {
+                    selected = 0;
+                }
+            }
+            selectableInputFields[selected].Select();
+        }
+        
+    }
+
     void UpdateInfo()
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
