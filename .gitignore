@@ -1,4 +1,5 @@
 .vsconfig
+.vscode/
 .vs/
 Assembly-CSharp.csproj
 Library
