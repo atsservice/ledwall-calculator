@@ -81,9 +81,41 @@ public class ScreenMenu : MonoBehaviour
         textMeshPro.text = s;        
     }
 
+    public string ValidateValue(string value)
+    {
+        value = value.Trim();
+        value = value.Replace('.', ',');
+        if (string.IsNullOrEmpty(value))
+        {
+            return null;
+        }
+        bool commaFound = false;
+        foreach (char c in value) {
+            if (c == ',')
+            {
+                if (commaFound)
+                {
+                    return null;
+                }
+                commaFound = true;
+            }
+            if (!"1234567890,".Contains(c)) { 
+                return null;
+            }
+        }
+        return value;
+    }
+
     public void UpdateSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value =ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldSizeX.text = screen.size.x.ToString();
+            return;
+        }
+        
         float sizeX = float.Parse(value);
         sizeX = (int)(sizeX / (screen.tileSize.x)) * (screen.tileSize.x);
         screen.size.x = sizeX;
@@ -92,6 +124,13 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateSizeY(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldSizeY.text=screen.size.y.ToString();
+            return;
+        }
+        
         float sizeY = float.Parse(value);
         sizeY = (int)(sizeY / (screen.tileSize.y)) * (screen.tileSize.y);
         screen.size.y = sizeY;
@@ -99,14 +138,28 @@ public class ScreenMenu : MonoBehaviour
     }
     public void UpdatePitch(string value)
     {
-        manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value);
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldPitch.text=screen.pitch.ToString();
+            return;
+        }
+
+        manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value);        
         screen.tileResolution = new Vector2((int)(screen.tileSize.x * 1000 / screen.pitch), (int)(screen.tileSize.y * 1000 / screen.pitch));
         screen.UpdateLedwall();
     }
     public void UpdatePower(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldPower.text=screen.tilePowerConsumption.ToString();
+            return;
+        }
+        
         screen.tilePowerConsumption = float.Parse(value);
         screen.UpdateLedwall();
     }
@@ -114,6 +167,13 @@ public class ScreenMenu : MonoBehaviour
      public void UpdateTileSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldTileSizeX.text=screen.tileSize.x.ToString();
+            return;
+        }
+        
         screen.tileSize.x = float.Parse(value);
         screen.tileResolution.x = screen.tileSize.x * 1000 / screen.pitch;
         screen.UpdateLedwall();
@@ -122,6 +182,13 @@ public class ScreenMenu : MonoBehaviour
      public void UpdateTileSizeY(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value);
+        if (value == null)
+        {
+            inputFieldTileSizeY.text = screen.tileSize.y.ToString();
+            return;
+        }
+        
         screen.tileSize.y = float.Parse(value);
         screen.tileResolution.y = screen.tileSize.y * 1000 / screen.pitch;
         screen.UpdateLedwall();
