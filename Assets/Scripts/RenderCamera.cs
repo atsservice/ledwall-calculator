@@ -67,8 +67,8 @@ public class RenderCamera : MonoBehaviour
         if (manager.selectedScreen != null)
         {
             Screen screen = manager.selectedScreen.GetComponent<Screen>();
-            float centerX = manager.selectedScreen.transform.position.x-.25f;
-            float centerY = manager.selectedScreen.transform.position.y+.25f;
+            float centerX = manager.selectedScreen.transform.position.x-screen.tileSize.x/2.0f;
+            float centerY = manager.selectedScreen.transform.position.y+screen.tileSize.y/2.0f;
             centerX += screen.size.x / 2.0f;
             centerY -= screen.size.y / 2.0f;
             transform.position = new Vector3(centerX, centerY, -10);

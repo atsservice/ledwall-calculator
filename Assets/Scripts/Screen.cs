@@ -59,6 +59,7 @@ public class Screen : MonoBehaviour
                 GameObject tile = Instantiate(tilePrefab, screenTiles);
                 tile.transform.localPosition = new Vector3(i * tileSize.x, -j * tileSize.y, 0);
                 tile.transform.localScale = tileSize;
+                tile.GetComponentInChildren<TMP_Text>().transform.localScale = (Vector3.one / tileSize) / 200.0f;
                 float actualHue = ((i+j)%5)/5.0f;
                 tile.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
                 tile.GetComponentInChildren<TMP_Text>().text = i + "," + j;
