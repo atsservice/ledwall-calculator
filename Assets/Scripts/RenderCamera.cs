@@ -8,11 +8,23 @@ using System.Runtime.InteropServices;
 
 public class RenderCamera : MonoBehaviour
 {
+    enum RenderStatus
+    {
+        IDLE,
+        START,
+        PIXELMAP,
+        POWER,
+        SIGNAL
+    }
     public Manager manager;
+    int actualCameraRender = 0;
+    string path;
+    RenderStatus renderStatus = RenderStatus.IDLE;
+    View oldView;
     // Start is called before the first frame update
     void Start()
     {
-        
+        actualCameraRender = 0;
     }
 
 
@@ -22,11 +34,18 @@ public class RenderCamera : MonoBehaviour
         {
             return;
         }
-        UpdateCamera();
-
-        DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
-
+        if (Application.platform != RuntimePlatform.WebGLPlayer)
+        {
+            path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "png");
+            if (path == "")
+            {
+                return;
+            }
+        }
+        actualCameraRender = 0;
+        renderStatus = RenderStatus.START;
     }
+
     static public void SaveTexture2DToFile(Texture2D tex, string filePath, SaveTextureFileFormat fileFormat, int jpgQuality = 95)
     {
         switch (fileFormat)
@@ -51,7 +70,7 @@ public class RenderCamera : MonoBehaviour
         EXR, JPG, PNG, TGA
     };
 
-    static public void DownloadRenderTexture(RenderTexture renderTexture, string filename, SaveTextureFileFormat fileFormat = SaveTextureFileFormat.PNG, int jpgQuality = 95)
+    public void DownloadRenderTexture(RenderTexture renderTexture, string filename, SaveTextureFileFormat fileFormat = SaveTextureFileFormat.PNG, int jpgQuality = 95)
     {
         Texture2D tex;
         if (fileFormat != SaveTextureFileFormat.EXR)
@@ -67,8 +86,7 @@ public class RenderCamera : MonoBehaviour
 
         if (Application.platform != RuntimePlatform.WebGLPlayer)
         {
-            string path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "png");
-            SaveTexture2DToFile(tex, path, fileFormat, jpgQuality);
+            SaveTexture2DToFile(tex, path+"_"+filename, fileFormat, jpgQuality);
         }
         else if (!WebGLFileSaver.IsSavingSupported())
         {
@@ -88,9 +106,9 @@ public class RenderCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void UpdateCamera()
+    void UpdateCamera(int cameraIndex)
     {
-        Screen screen = manager.screens[0].GetComponent<Screen>();
+        Screen screen = manager.screens[cameraIndex].GetComponent<Screen>();
         float centerX = screen.transform.position.x - screen.tileSize.x / 2.0f;
         float centerY = screen.transform.position.y + screen.tileSize.y / 2.0f;
         centerX += screen.size.x / 2.0f;
@@ -102,6 +120,73 @@ public class RenderCamera : MonoBehaviour
         }
         GetComponent<Camera>().orthographicSize = .5f * screen.size.y;
         GetComponent<Camera>().targetTexture = new RenderTexture((int)screen.resolution.x, (int)screen.resolution.y, 24);
+    }
+
+    void Update()
+    {
+        if (renderStatus == RenderStatus.IDLE)
+        {
+            return;
+        }
+        if (renderStatus == RenderStatus.START)
+        {
+            oldView = manager.VIEW;
+            manager.ChangeView ((int)View.Pixelmap);
+            UpdateCamera(actualCameraRender);
+            renderStatus = RenderStatus.PIXELMAP;
+            return;
+        }
+        if (renderStatus == RenderStatus.PIXELMAP)
+        {
+            DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap" + (actualCameraRender+1), SaveTextureFileFormat.PNG);
+            actualCameraRender++;
+            if (actualCameraRender < manager.screens.Count)
+            {
+                UpdateCamera(actualCameraRender);
+            }
+            else
+            {
+                actualCameraRender = 0;
+                manager.ChangeView((int)View.Power);
+                UpdateCamera(actualCameraRender);
+                renderStatus = RenderStatus.POWER;
+            }
+            return;
+        }
+        if (renderStatus == RenderStatus.POWER)
+        {
+            DownloadRenderTexture(GetComponent<Camera>().targetTexture, "power" + (actualCameraRender + 1), SaveTextureFileFormat.PNG);
+            actualCameraRender++;
+            if (actualCameraRender < manager.screens.Count)
+            {
+                UpdateCamera(actualCameraRender);
+            }
+            else
+            {
+                actualCameraRender = 0;
+                manager.ChangeView((int)View.Signal);
+                UpdateCamera(actualCameraRender);
+                renderStatus = RenderStatus.SIGNAL;
+            }
+            return;
+        }
+        if (renderStatus == RenderStatus.SIGNAL)
+        {
+            DownloadRenderTexture(GetComponent<Camera>().targetTexture, "signal" + (actualCameraRender + 1), SaveTextureFileFormat.PNG);
+            actualCameraRender++;
+            if (actualCameraRender < manager.screens.Count)
+            {
+                UpdateCamera(actualCameraRender);
+            }
+            else
+            {
+                actualCameraRender = 0;
+                manager.ChangeView((int)oldView);
+                renderStatus = RenderStatus.IDLE;
+            }
+            return;
+        }
+
     }
 
 }
