@@ -13,7 +13,7 @@ public class Manager : MonoBehaviour
 {
     public GameObject screenPrefab;
 
-    public GameObject screenMenu;
+    public ScreenMenu screenMenu;
 
     public GameObject selectedScreen { get; private set; }
 
@@ -24,16 +24,14 @@ public class Manager : MonoBehaviour
     public List<Screen> screens = new List<Screen>();
     
 
-    public void Start()
-    {
-        CloseScreenMenu();
-    }
+    
 
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            CloseScreenMenu();
+            selectedScreen = null;
+            screenMenu.UnloadData();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -52,7 +50,7 @@ public class Manager : MonoBehaviour
                 if (hit.transform.gameObject.GetComponent<Screen>() != null)
                 {
                     selectedScreen = hit.transform.gameObject;
-                    OpenScreenMenu();
+                    screenMenu.LoadData(selectedScreen.GetComponent<Screen>());
                 }
             }
         }
@@ -79,7 +77,7 @@ public class Manager : MonoBehaviour
             {
                 if (selectedScreen == null)
                 {
-                    CloseScreenMenu();
+                    screenMenu.UnloadData();
                 }
             }
         }
@@ -91,19 +89,11 @@ public class Manager : MonoBehaviour
         screen.transform.localPosition = Vector3.zero;
 
         screens.Add(screen.GetComponent<Screen>());
+        selectedScreen=screen;
+        screenMenu.LoadData(screen.GetComponent<Screen>());
+        screenMenu.AddScreen("screen " + screens.Count);
     }
-
-    void OpenScreenMenu()
-    {
-        screenMenu.SetActive(true);
-        screenMenu.transform.position = Camera.main.WorldToScreenPoint(selectedScreen.transform.position+selectedScreen.transform.localScale);
-    }
-
-    void CloseScreenMenu()
-    {
-        screenMenu.SetActive(false);
-    }
-
+    
     public void ChangeView(int value)
     {
         Debug.Log(value);
@@ -112,5 +102,17 @@ public class Manager : MonoBehaviour
         {
             screen.RegenerateTiles();
         }
+    }
+
+    public void SelectScreen(int value)
+    {
+        if (value == 0)
+        { selectedScreen = null;
+        screenMenu.UnloadData();
+        return;
+        }
+        value--;
+        selectedScreen=screens[value].gameObject;
+        screenMenu.LoadData(screens[value]);   
     }
 }

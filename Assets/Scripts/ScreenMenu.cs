@@ -14,9 +14,9 @@ public class ScreenMenu : MonoBehaviour
     public TMP_InputField inputFieldSizeX, inputFieldSizeY, inputFieldPitch, inputFieldPower, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldStartX, inputFieldStartY;
     public TMP_Text textMeshPro;
 
-    private void OnEnable()
+    public TMP_Dropdown dropdownSelectScreen;
+    public void LoadData(Screen screen)
     {
-        Screen screen = manager.selectedScreen.GetComponent<Screen>();
         inputFieldSizeX.text = screen.size.x.ToString();
         inputFieldSizeY.text = screen.size.y.ToString();
         inputFieldPitch.text = screen.pitch.ToString();
@@ -25,7 +25,20 @@ public class ScreenMenu : MonoBehaviour
         inputFieldTileSizeY.text = screen.tileSize.y.ToString();
         inputFieldStartX.text = screen.startPosition.x.ToString();
         inputFieldStartY.text = screen.startPosition.y.ToString();
-        UpdateInfo();
+        UpdateInfo(screen);
+    }
+
+    public void UnloadData()
+    {
+        inputFieldSizeX.text = "";
+        inputFieldSizeY.text = "";
+        inputFieldPitch.text = "";
+        inputFieldPower.text = "";
+        inputFieldTileSizeX.text = "";
+        inputFieldTileSizeY.text = "";
+        inputFieldStartX.text = "";
+        inputFieldStartY.text = "";
+        textMeshPro.text = "";
     }
 
     private void Update()
@@ -68,9 +81,8 @@ public class ScreenMenu : MonoBehaviour
         
     }
 
-    void UpdateInfo()
+    void UpdateInfo(Screen screen)
     {
-        Screen screen = manager.selectedScreen.GetComponent<Screen>();
         string s = "";
         s += "Size:   " + screen.size.x + " x " + screen.size.y + " m\n";
         s += "Pixel Pitch: " + screen.pitch + " mm\n\n";
@@ -123,6 +135,7 @@ public class ScreenMenu : MonoBehaviour
         sizeX = (int)(sizeX / (screen.tileSize.x)) * (screen.tileSize.x);
         screen.size.x = sizeX;
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
     public void UpdateSizeY(string value)
     {
@@ -138,6 +151,7 @@ public class ScreenMenu : MonoBehaviour
         sizeY = (int)(sizeY / (screen.tileSize.y)) * (screen.tileSize.y);
         screen.size.y = sizeY;
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
     public void UpdatePitch(string value)
     {
@@ -152,6 +166,7 @@ public class ScreenMenu : MonoBehaviour
         manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value,CultureInfo.InvariantCulture);   
         screen.tileResolution = new Vector2((int)(screen.tileSize.x * 1000 / screen.pitch), (int)(screen.tileSize.y * 1000 / screen.pitch));
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
     public void UpdatePower(string value)
     {
@@ -165,6 +180,7 @@ public class ScreenMenu : MonoBehaviour
         
         screen.tilePowerConsumption = float.Parse(value,CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
 
      public void UpdateTileSizeX(string value)
@@ -180,6 +196,7 @@ public class ScreenMenu : MonoBehaviour
         screen.tileSize.x = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.x = screen.tileSize.x * 1000 / screen.pitch;
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
 
      public void UpdateTileSizeY(string value)
@@ -195,6 +212,7 @@ public class ScreenMenu : MonoBehaviour
         screen.tileSize.y = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.y = screen.tileSize.y * 1000 / screen.pitch;
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
 
     public void UpdateStartX(string value)
@@ -207,8 +225,9 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        screen.startPosition.x=float.Parse(value,CultureInfo.InvariantCulture);
+        screen.startPosition.x = float.Parse(value, CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
 
     public void UpdateStartY(string value)
@@ -221,7 +240,13 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        screen.startPosition.y = float.Parse(value,CultureInfo.InvariantCulture);
+        screen.startPosition.y = float.Parse(value, CultureInfo.InvariantCulture);
         screen.UpdateLedwall();
+        UpdateInfo(screen);
+    }
+
+    public void AddScreen(string name)
+    {
+        dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = name });
     }
 }
