@@ -20,7 +20,15 @@ public class RenderCamera : MonoBehaviour
     {
         if (manager.selectedScreen != null)
         {
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
             DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
+            }
+            else {
+                Debug.Log("impoissibile scaricare");
+
+                //string path=StandaloneFilebrowser.SaveFilePanel("Save File","", "", "png");
+            }
         }
     }
 

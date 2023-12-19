@@ -2002,6 +2002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screenPrefab: {fileID: 6217908399861375073, guid: 97b170268411d8e46aa57bd69ef5fdcc, type: 3}
   screenMenu: {fileID: 21325572}
+  VIEW: 0
 --- !u!4 &432463219
 Transform:
   m_ObjectHideFlags: 0
@@ -3841,7 +3842,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Pixel Map
+  m_Text: SALVA
 --- !u!222 &881655973
 CanvasRenderer:
   m_ObjectHideFlags: 0
