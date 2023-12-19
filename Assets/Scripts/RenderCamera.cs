@@ -18,19 +18,20 @@ public class RenderCamera : MonoBehaviour
 
     public void SavePixelMap()
     {
-        if (manager.selectedScreen != null)
+        if (manager.screens.Count==0)
         {
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-            {
+            return;
+        }
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
             DownloadRenderTexture(GetComponent<Camera>().targetTexture, "pixelmap", SaveTextureFileFormat.PNG);
-            }
-            else {
-                Debug.Log("impoissibile scaricare");
-
-                //string path=StandaloneFilebrowser.SaveFilePanel("Save File","", "", "png");
-            }
+        }
+        else
+        {
+            string path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "png");
         }
     }
+
 
     public enum SaveTextureFileFormat
     {

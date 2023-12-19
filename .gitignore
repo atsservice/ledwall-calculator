@@ -8,3 +8,5 @@ obj
 ledwall-calculator.sln
 Temp
 UserSettings
+.DS_Store
+*.csproj

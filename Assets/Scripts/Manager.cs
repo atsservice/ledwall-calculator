@@ -21,7 +21,7 @@ public class Manager : MonoBehaviour
 
     public View VIEW = View.Pixelmap;
 
-    List<Screen> screens = new List<Screen>();
+    public List<Screen> screens = new List<Screen>();
     
 
     public void Start()
