@@ -83,7 +83,7 @@ public class Screen : MonoBehaviour
                 {
                     float actualHue = ((i + j) % 5) / 5.0f;
                     tiles[i,j].GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
-                    tiles[i,j].GetComponentInChildren<TMP_Text>().text = i + "," + j;
+                    tiles[i,j].GetComponentInChildren<TMP_Text>().text = i+1 + "," + (j+1);
                 }
             }
         }
