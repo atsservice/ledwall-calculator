@@ -115,7 +115,7 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value =ValidateValue(value);3
+        value =ValidateValue(value);
         if (value == null)
         {
             inputFieldSizeX.text = screen.size.x.ToString();
