@@ -1,13 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Tilemaps;
 using System.Globalization;
-using UnityEngine.Rendering;
+using StringMath;
 
 public class ScreenMenu : MonoBehaviour
 {
@@ -105,34 +99,23 @@ public class ScreenMenu : MonoBehaviour
     }
 
     public string ValidateValue(string value, bool validateInteger=false)
-    {
-        value = value.Trim();
-        value = value.Replace(',', '.');
-        if (string.IsNullOrEmpty(value))
-        {
+    {      
+        value=value.Replace(',','.');
+        try{     
+            MathExpr expr = value;
+            float f = (float) expr.Result;
+            return f.ToString().Replace(',','.');
+        }
+        catch(MathException exception){
+            Debug.Log(exception.Message);
             return null;
         }
-        bool commaFound = validateInteger;
-        foreach (char c in value) {
-            if (c == '.')
-            {
-                if (commaFound)
-                {
-                    return null;
-                }
-                commaFound = true;
-            }
-            if (!"1234567890.".Contains(c)) { 
-                return null;
-            }
-        }
-        return value;
     }
 
     public void UpdateSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value =ValidateValue(value);
+        value =ValidateValue(value);3
         if (value == null)
         {
             inputFieldSizeX.text = screen.size.x.ToString();
@@ -142,6 +125,7 @@ public class ScreenMenu : MonoBehaviour
         float sizeX = float.Parse(value,CultureInfo.InvariantCulture);
         sizeX = (int)(sizeX / (screen.tileSize.x)) * (screen.tileSize.x);
         screen.size.x = sizeX;
+        inputFieldSizeX.text=sizeX.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -154,10 +138,11 @@ public class ScreenMenu : MonoBehaviour
             inputFieldSizeY.text=screen.size.y.ToString();
             return;
         }
-        
+
         float sizeY = float.Parse(value,CultureInfo.InvariantCulture);
         sizeY = (int)(sizeY / (screen.tileSize.y)) * (screen.tileSize.y);
         screen.size.y = sizeY;
+        inputFieldSizeY.text=sizeY.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -171,8 +156,10 @@ public class ScreenMenu : MonoBehaviour
             return;
         }
 
-        manager.selectedScreen.GetComponent<Screen>().pitch = float.Parse(value,CultureInfo.InvariantCulture);   
+        float pitch = float.Parse(value,CultureInfo.InvariantCulture);   
+        manager.selectedScreen.GetComponent<Screen>().pitch = pitch;
         screen.tileResolution = new Vector2((int)(screen.tileSize.x * 1000 / screen.pitch), (int)(screen.tileSize.y * 1000 / screen.pitch));
+        inputFieldPitch.text=pitch.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -185,8 +172,9 @@ public class ScreenMenu : MonoBehaviour
             inputFieldPower.text=screen.tilePowerConsumption.ToString();
             return;
         }
-        
-        screen.tilePowerConsumption = float.Parse(value,CultureInfo.InvariantCulture);
+        float power = float.Parse(value,CultureInfo.InvariantCulture);
+        screen.tilePowerConsumption = power;
+        inputFieldPower.text=power.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -203,6 +191,7 @@ public class ScreenMenu : MonoBehaviour
         
         screen.tileSize.x = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.x = screen.tileSize.x * 1000 / screen.pitch;
+        inputFieldTileSizeX.text=screen.tileSize.x.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -219,6 +208,7 @@ public class ScreenMenu : MonoBehaviour
         
         screen.tileSize.y = float.Parse(value,CultureInfo.InvariantCulture);
         screen.tileResolution.y = screen.tileSize.y * 1000 / screen.pitch;
+        inputFieldTileSizeY.text=screen.tileSize.y.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -234,6 +224,7 @@ public class ScreenMenu : MonoBehaviour
         }
 
         screen.startPosition.x = float.Parse(value, CultureInfo.InvariantCulture);
+        inputFieldStartX.text=screen.startPosition.x.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
@@ -249,6 +240,7 @@ public class ScreenMenu : MonoBehaviour
         }
 
         screen.startPosition.y = float.Parse(value, CultureInfo.InvariantCulture);
+        inputFieldStartY.text=screen.startPosition.y.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }
