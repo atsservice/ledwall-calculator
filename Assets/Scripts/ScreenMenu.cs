@@ -11,7 +11,8 @@ public class ScreenMenu : MonoBehaviour
 
     public TMP_Dropdown dropdownSelectScreen;
 
-    public GameObject buttonDelete;
+    public GameObject contentFrame;
+
     public void LoadData(Screen screen)
     {
         inputFieldSizeX.text = screen.size.x.ToString();
@@ -23,9 +24,9 @@ public class ScreenMenu : MonoBehaviour
         inputFieldStartX.text = screen.startPosition.x.ToString();
         inputFieldStartY.text = screen.startPosition.y.ToString();
         UpdateInfo(screen);
-        buttonDelete.SetActive(true);
         int i = manager.screens.IndexOf(screen) + 1;
         dropdownSelectScreen.value=i;
+        contentFrame.SetActive(true);
     }
 
     public void UnloadData()
@@ -39,8 +40,8 @@ public class ScreenMenu : MonoBehaviour
         inputFieldStartX.text = "";
         inputFieldStartY.text = "";
         textMeshPro.text = "";
-        buttonDelete.SetActive(false);
         dropdownSelectScreen.value=0;
+        contentFrame.SetActive(false);
     }
 
     private void Update()
@@ -98,12 +99,15 @@ public class ScreenMenu : MonoBehaviour
         textMeshPro.text = s;        
     }
 
-    public string ValidateValue(string value, bool validateInteger=false)
+    public string ValidateValue(string value, bool nonZeroPositive=false)
     {      
         value=value.Replace(',','.');
         try{     
             MathExpr expr = value;
             float f = (float) expr.Result;
+            if (nonZeroPositive && f<=0){
+                return null;
+            }
             return f.ToString().Replace(',','.');
         }
         catch(MathException exception){
@@ -115,7 +119,7 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value =ValidateValue(value);
+        value =ValidateValue(value,true);
         if (value == null)
         {
             inputFieldSizeX.text = screen.size.x.ToString();
@@ -132,7 +136,7 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateSizeY(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value);
+        value = ValidateValue(value,true);
         if (value == null)
         {
             inputFieldSizeY.text=screen.size.y.ToString();
@@ -149,7 +153,7 @@ public class ScreenMenu : MonoBehaviour
     public void UpdatePitch(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value);
+        value = ValidateValue(value,true);
         if (value == null)
         {
             inputFieldPitch.text=screen.pitch.ToString();
@@ -166,7 +170,7 @@ public class ScreenMenu : MonoBehaviour
     public void UpdatePower(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value);
+        value = ValidateValue(value,true);
         if (value == null)
         {
             inputFieldPower.text=screen.tilePowerConsumption.ToString();
@@ -182,7 +186,7 @@ public class ScreenMenu : MonoBehaviour
      public void UpdateTileSizeX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value);
+        value = ValidateValue(value,true);
         if (value == null)
         {
             inputFieldTileSizeX.text=screen.tileSize.x.ToString();
@@ -199,7 +203,7 @@ public class ScreenMenu : MonoBehaviour
      public void UpdateTileSizeY(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value);
+        value = ValidateValue(value,true);
         if (value == null)
         {
             inputFieldTileSizeY.text = screen.tileSize.y.ToString();
@@ -216,14 +220,14 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateStartX(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value, true);
+        value = ValidateValue(value);
         if (value == null)
         {
             inputFieldStartX.text = screen.startPosition.x.ToString();
             return;
         }
 
-        screen.startPosition.x = float.Parse(value, CultureInfo.InvariantCulture);
+        screen.startPosition.x = (int)float.Parse(value, CultureInfo.InvariantCulture);
         inputFieldStartX.text=screen.startPosition.x.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
@@ -232,14 +236,14 @@ public class ScreenMenu : MonoBehaviour
     public void UpdateStartY(string value)
     {
         Screen screen = manager.selectedScreen.GetComponent<Screen>();
-        value = ValidateValue(value, true);
+        value = ValidateValue(value);
         if (value == null)
         {
             inputFieldStartY.text = screen.startPosition.y.ToString();
             return;
         }
 
-        screen.startPosition.y = float.Parse(value, CultureInfo.InvariantCulture);
+        screen.startPosition.y = (int)float.Parse(value, CultureInfo.InvariantCulture);
         inputFieldStartY.text=screen.startPosition.y.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
