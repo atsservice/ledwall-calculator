@@ -21,7 +21,7 @@ public class Screen : MonoBehaviour
 
     public GameObject[,] tiles;
 
-    int[][] powerLines;
+    int[][] powerLines;   
 
     // Start is called before the first frame update
     void Start()
@@ -54,7 +54,17 @@ public class Screen : MonoBehaviour
         RegenerateTiles();
     }
 
+    char[] charset = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+    string LetterEncoding(int i){
+        string output="";        
+        do{
+            int r = i%26;
+            i/=26;
+            output=charset[r]+output;            
+        }while(i>0);
 
+        return output;
+    }
 
     public void RegenerateTiles()
     {
@@ -80,9 +90,8 @@ public class Screen : MonoBehaviour
             for (int i=0; i< horizontalTilenumber; i++)
             {
                 for (int j = 0; j < verticalTilenumber; j++)
-                {
-                    float actualHue = ((i + j) % 5) / 5.0f;
-                    tiles[i,j].GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
+                {                    
+                    tiles[i,j].GetComponent<SpriteRenderer>().color = manager.pixelmapPalette[(i + j) % manager.pixelmapPalette.Length];
                     tiles[i,j].GetComponentInChildren<TMP_Text>().text = i+1 + "," + (j+1);
                 }
             }
@@ -118,14 +127,12 @@ public class Screen : MonoBehaviour
             int actualX = 0;
             int actualY = 0;
             int actualLine = 0;
-            int actualTile = 0;
+            int actualTile = 0;            
             for (int i = 0; i < horizontalTilenumber * verticalTilenumber; i++)
             {
-                powerLines[actualLine][actualTile] = actualY * horizontalTilenumber + actualX;
-
-                float actualHue = (float)actualLine/(float)numberOfPowerLines;
-                tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
-                tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = ( actualTile+1).ToString();
+                powerLines[actualLine][actualTile] = actualY * horizontalTilenumber + actualX;                
+                tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = manager.powerPalette[actualLine%manager.powerPalette.Length];
+                tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = LetterEncoding(actualLine)+(actualTile+1);
 
                 if (actualY % 2 == 0)
                 {
@@ -177,14 +184,13 @@ public class Screen : MonoBehaviour
             int actualTile = 0;
 
             for (int i = 0; i < horizontalTilenumber * verticalTilenumber; i++)
-            {
-                float actualHue = (float)actualLine / (float)numberOfLines;
-                tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = Color.HSVToRGB(actualHue, 1, 1);
-                tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = (actualTile + 1).ToString();
+            {                
+                tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = manager.signalPalette[actualLine%manager.signalPalette.Length];
+                tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = LetterEncoding(actualLine)+(actualTile+1);
 
                 if (horizontalsignal)
                 {
-                    if ((actualTile/horizontalTilenumber) % 2 == 0)
+                    if (actualTile/horizontalTilenumber % 2 == 0)
                     {
                         actualX++;
                         if (actualX >= horizontalTilenumber)
@@ -212,7 +218,7 @@ public class Screen : MonoBehaviour
                 }
                 else
                 {
-                    if ((actualTile / verticalTilenumber) % 2 == 0)
+                    if (actualTile / verticalTilenumber % 2 == 0)
                     {
                         actualY++;
                         if (actualY >= verticalTilenumber)

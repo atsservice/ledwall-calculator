@@ -11,6 +11,10 @@ public enum View
 
 public class Manager : MonoBehaviour
 {
+
+    public Color[] pixelmapPalette;
+    public Color[] powerPalette;
+    public Color[] signalPalette;
     public GameObject screenPrefab;
 
     public ScreenMenu screenMenu;
