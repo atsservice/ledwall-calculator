@@ -18,7 +18,7 @@ public class Screen : MonoBehaviour
 
     public int maxTilesPerPowerLine = 16;
     public int maxTilesPerSignalLine = 40;
-
+    
     public GameObject[,] tiles;
 
     int[][] powerLines;   
