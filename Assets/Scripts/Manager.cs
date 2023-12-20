@@ -114,7 +114,6 @@ public class Manager : MonoBehaviour
 
     public void ChangeView(int value)
     {
-        Debug.Log(value);
         VIEW = (View)value;
         foreach (Screen screen in screens)
         {
