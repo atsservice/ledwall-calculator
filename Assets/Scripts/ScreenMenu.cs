@@ -98,8 +98,9 @@ public class ScreenMenu : MonoBehaviour
         s += "Total Power Consumption: " + screen.totalPowerConsumption + " W\n\n";
         s += "Ledwall Materials:\n";
         s += "Total Tile Number: " + screen.verticalTilenumber*screen.horizontalTilenumber + " tiles\n";
-       // s += "Total Power Line: ";
-       // s += "Total Signal Line: ";
+       // s += "Total Power Line:  ;
+       // s += "Total Signal Line: " ;
+       // s += "Aspect Ratio: " ;
         textMeshPro.text = s;        
     }
 
