@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -167,86 +168,132 @@ public class Screen : MonoBehaviour
 
         if (manager.VIEW == View.Signal)
         {
-            maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
-            int horizontallines = maxTilesPerSignalLine / horizontalTilenumber;
-            horizontallines = (int)Mathf.Ceil(verticalTilenumber / (float)horizontallines);
+            DrawSignalNewMethod();
+        }
+    }
 
-            int verticallines = maxTilesPerSignalLine / verticalTilenumber;
-            verticallines = (int)Mathf.Ceil(horizontalTilenumber / (float)verticallines);
+    List<Vector2> GenerateShapes(int _tileNumber, Vector2 _tileResolution, Vector2 _maxResolution){        
+        int maxHeight=_tileNumber;
+        if ((int)(_maxResolution.y/_tileResolution.y)<maxHeight){
+            maxHeight=(int)(_maxResolution.y/_tileResolution.y);
+        }
 
-            bool horizontalsignal = true;
-            int numberOfLines = horizontallines;
-            if (verticallines < horizontallines)
-            {
-                horizontalsignal = false;
-                numberOfLines = verticallines;
+        List<Vector2> shapes = new List<Vector2>();
+        int i = 1;
+        while (i<=maxHeight){            
+            int width=_tileNumber/i;
+            if ((int)(_maxResolution.x/_tileResolution.x)<width){
+                width=(int)(_maxResolution.x/_tileResolution.x);
             }
+            Vector2 shape = new Vector2(width,i);
+            shapes.Add(shape);
+            Debug.Log(shape);
+            i+=1;
+        }
+        return shapes;
+    }
+void Ordine()
+    {
+    }    
 
-            int actualX = 0;
-            int actualY = 0;
-            int actualLine = 0;
-            int actualTile = 0;
+    void DrawSignalNewMethod(){        
+        List<Vector2> shapes = GenerateShapes(maxTilesPerSignalLine,tileResolution,new Vector2(3840,2160));
+        //genera la lista delle possibili linee di segnale che si possono cablare
 
-            for (int i = 0; i < horizontalTilenumber * verticalTilenumber; i++)
-            {                
-                tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = manager.signalPalette[actualLine%manager.signalPalette.Length];
-                tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = LetterEncoding(actualLine)+(actualTile+1);
+    }
+    void DrawSignalOldMethod(){
+        maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
+        int horizontallines = maxTilesPerSignalLine / horizontalTilenumber;
+        if (horizontallines==0){
+            horizontallines=int.MaxValue;
+        }
+        else{
+            horizontallines = (int)Mathf.Ceil(verticalTilenumber / (float)horizontallines);
+        }
+        
+        int verticallines = maxTilesPerSignalLine / verticalTilenumber;        
+        if (verticallines==0){
+            verticallines=int.MaxValue;
+            if (horizontallines==int.MaxValue){
+                Debug.LogError("Nessuna soluzione");
+            }
+        }
+        else{
+            verticallines = (int)Mathf.Ceil(horizontalTilenumber / (float)verticallines);
+        }
 
-                if (horizontalsignal)
+        bool horizontalsignal = true;
+        int numberOfLines = horizontallines;
+        if (verticallines < horizontallines)
+        {
+            horizontalsignal = false;
+            numberOfLines = verticallines;
+        }
+
+        int actualX = 0;
+        int actualY = 0;
+        int actualLine = 0;
+        int actualTile = 0;
+
+        for (int i = 0; i < horizontalTilenumber * verticalTilenumber; i++)
+        {                
+            tiles[actualX, actualY].GetComponent<SpriteRenderer>().color = manager.signalPalette[actualLine%manager.signalPalette.Length];
+            tiles[actualX, actualY].GetComponentInChildren<TMP_Text>().text = LetterEncoding(actualLine)+(actualTile+1);
+
+            if (horizontalsignal)
+            {
+                if (actualTile/horizontalTilenumber % 2 == 0)
                 {
-                    if (actualTile/horizontalTilenumber % 2 == 0)
-                    {
-                        actualX++;
-                        if (actualX >= horizontalTilenumber)
-                        {
-                            actualX--;
-                            actualY++;
-                        }
-                    }
-                    else
+                    actualX++;
+                    if (actualX >= horizontalTilenumber)
                     {
                         actualX--;
-                        if (actualX < 0)
-                        {
-                            actualX++;
-                            actualY++;
-                        }
-                    }
-                    actualTile++;
-                    if (actualY >= (actualLine+1) * (maxTilesPerSignalLine / horizontalTilenumber))
-                    {
-                        actualX = 0;
-                        actualTile = 0;
-                        actualLine++;
+                        actualY++;
                     }
                 }
                 else
                 {
-                    if (actualTile / verticalTilenumber % 2 == 0)
+                    actualX--;
+                    if (actualX < 0)
                     {
+                        actualX++;
                         actualY++;
-                        if (actualY >= verticalTilenumber)
-                        {
-                            actualY--;
-                            actualX++;
-                        }
                     }
-                    else
+                }
+                actualTile++;
+                if (actualY >= (actualLine+1) * (maxTilesPerSignalLine / horizontalTilenumber))
+                {
+                    actualX = 0;
+                    actualTile = 0;
+                    actualLine++;
+                }
+            }
+            else
+            {
+                if (actualTile / verticalTilenumber % 2 == 0)
+                {
+                    actualY++;
+                    if (actualY >= verticalTilenumber)
                     {
                         actualY--;
-                        if (actualY < 0)
-                        {
-                            actualY++;
-                            actualX++;
-                        }
+                        actualX++;
                     }
-                    actualTile++;
-                    if (actualX >= (actualLine + 1) * (maxTilesPerSignalLine / verticalTilenumber))
+                }
+                else
+                {
+                    actualY--;
+                    if (actualY < 0)
                     {
-                        actualY = 0;
-                        actualTile = 0;
-                        actualLine++;
+                        actualY++;
+                        actualX++;
                     }
+                }
+                actualTile++;
+                if (actualX >= (actualLine + 1) * (maxTilesPerSignalLine / verticalTilenumber))
+                {
+                    actualY = 0;
+                    actualTile = 0;
+                    actualLine++;
                 }
             }
         }
