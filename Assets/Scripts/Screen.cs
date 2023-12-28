@@ -224,6 +224,9 @@ public class Screen : MonoBehaviour
             }
         }
         int actualSignalLine=startingLineNumber;
+        //qui dovrebbe essere while true, ma per motivi di debug abbiamo limitato a 1000,
+        //così se sbagliamo qualcosa non entra in un loop infinito. in futuro bisogna scriverlo meglio,
+        //ma difficilmente si arriverà mai ad avere una sending card a cui colleghiamo 1000 cavi di rete fisici
         while(actualSignalLine<1000){
             //trova il primo punto libero
             int x=0;
