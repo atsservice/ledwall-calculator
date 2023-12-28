@@ -13,6 +13,7 @@ public class ScreenMenu : MonoBehaviour
 
     public GameObject contentFrame;
 
+
     public void LoadData(Screen screen)
     {
         inputFieldSizeX.text = screen.size.x.ToString();
@@ -100,7 +101,8 @@ public class ScreenMenu : MonoBehaviour
         s += "Total Tile Number: " + screen.verticalTilenumber*screen.horizontalTilenumber + " tiles\n";
        // s += "Total Power Line:  ;
        // s += "Total Signal Line: " ;
-       // s += "Aspect Ratio: " ;
+       float f = screen.resolution.x/16.0f;
+       s += $"Aspect Ratio: 16/{screen.resolution.y/f}";
         textMeshPro.text = s;        
     }
 

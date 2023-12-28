@@ -24,10 +24,14 @@ public class Screen : MonoBehaviour
     int[][] powerLines;   
 
     // Start is called before the first frame update
-    void Start()
-    {
-        manager = FindObjectOfType<Manager>();        
+    void Awake()
+    {   
+        manager = FindObjectOfType<Manager>();     
         UpdateLedwall();
+    }
+
+    void Start(){
+        
     }
     // Update is called once per frame
     public void UpdateLedwall()
