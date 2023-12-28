@@ -172,34 +172,168 @@ public class Screen : MonoBehaviour
         }
     }
 
-    List<Vector2> GenerateShapes(int _tileNumber, Vector2 _tileResolution, Vector2 _maxResolution){        
+    List<Vector2> GenerateShapes(int _tileNumber, Vector2 _tileResolution, Vector2 _sendingCardMaxResolution){        
         int maxHeight=_tileNumber;
-        if ((int)(_maxResolution.y/_tileResolution.y)<maxHeight){
-            maxHeight=(int)(_maxResolution.y/_tileResolution.y);
+        if ((int)(_sendingCardMaxResolution.y/_tileResolution.y)<maxHeight){
+            maxHeight=(int)(_sendingCardMaxResolution.y/_tileResolution.y);
         }
 
         List<Vector2> shapes = new List<Vector2>();
         int i = 1;
         while (i<=maxHeight){            
             int width=_tileNumber/i;
-            if ((int)(_maxResolution.x/_tileResolution.x)<width){
-                width=(int)(_maxResolution.x/_tileResolution.x);
+            if ((int)(_sendingCardMaxResolution.x/_tileResolution.x)<width){
+                width=(int)(_sendingCardMaxResolution.x/_tileResolution.x);
             }
             Vector2 shape = new Vector2(width,i);
             shapes.Add(shape);
-            Debug.Log(shape);
             i+=1;
         }
         return shapes;
     }
-void Ordine()
+    
+    int CompareByArea(Vector2 a, Vector2 b)
     {
-    }    
+        float areaA = a.x*a.y;
+        float areaB = b.x*b.y;
+        if (areaA < areaB)
+        {
+            return -1;
+        }
+        else if (areaA > areaB)
+        {
+            return 1;
+        }
+        //a parità di area prendi quello con larghezza maggiore
+        if (a.x < b.x) {
+            return -1;
+        }
+        else if (a.x > b.x)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    //area in numero di tile
+    int[,] FillArea(Vector2 area, List<Vector2> validShapes, int startingLineNumber){
+        int[,] output = new int[(int)area.x,(int)area.y];
+        for (int a=0;a<area.x;a++){
+            for (int b=0;b<area.y;b++){
+                output[a,b]=-1;
+            }
+        }
+        int actualSignalLine=startingLineNumber;
+        while(actualSignalLine<1000){
+            //trova il primo punto libero
+            int x=0;
+            int y=0;
+            while(output[x,y]!=-1){
+                y++;
+                if (y>=area.y){
+                    y=0;
+                    x++;
+                    if (x>=area.x){
+                        return output;
+                    }
+                }
+            }
+            //trova la forma che cabli più tiles            
+            Vector2 bestShape = new Vector2(0,0);
+            int bestResult=int.MinValue;
+            foreach(Vector2 actualShape in validShapes){
+                int result=0;
+                for (int a=0;a<actualShape.x;a++){
+                    for (int b=0;b<actualShape.y;b++){
+                        if (x+a>=area.x){
+                            continue;
+                        }
+                        if (y+b>=area.y){
+                            continue;
+                        }
+                        if (output[x+a,y+b]==-1){
+                            result++;
+                        }
+                    }
+                }
+                if (result>bestResult){
+                    bestShape=actualShape;
+                    bestResult=result;
+                }
+            }
+            //riempi la forma
+            for (int a=0;a<bestShape.x;a++){
+                for (int b=0;b<bestShape.y;b++){
+                    if (x+a>=area.x){
+                        continue;
+                    }
+                    if (y+b>=area.y){
+                        continue;
+                    }
+                    if (output[x+a,y+b]!=-1){
+                        continue;
+                    }
+                    output[x+a,y+b]=actualSignalLine;
+                }
+            }
+            actualSignalLine++;
+        }
+        return output;
+    }
 
     void DrawSignalNewMethod(){        
-        List<Vector2> shapes = GenerateShapes(maxTilesPerSignalLine,tileResolution,new Vector2(3840,2160));
-        //genera la lista delle possibili linee di segnale che si possono cablare
+        
+        Vector2 sendingMaxResolution= new Vector2(3840,2160);
 
+        maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
+        List<Vector2> validShapes = GenerateShapes(maxTilesPerSignalLine,tileResolution,sendingMaxResolution);
+        validShapes.Sort(CompareByArea);
+        validShapes.Reverse();
+        //conta quante sending card dovrai usare per rispettare la risoluzione massima
+        List<Vector4> areas = new List<Vector4>();
+        int horizontalSendingNumber=(int)Mathf.Ceil(resolution.x/sendingMaxResolution.x);
+        int verticalSendingNumber=(int)Mathf.Ceil(resolution.y/sendingMaxResolution.y);
+        for (int i=0;i<horizontalSendingNumber;i++){
+            for (int j=0;j<verticalSendingNumber;j++){
+                float xStart=i*sendingMaxResolution.x;
+                float yStart=j*sendingMaxResolution.y;
+                float xSize=sendingMaxResolution.x;
+                if ((xStart+xSize)>resolution.x){
+                    xSize=resolution.x-xStart;
+                }
+                float ySize=sendingMaxResolution.y;
+                if ((yStart+ySize)>resolution.y){
+                    ySize=resolution.y-yStart;
+                }
+                
+                areas.Add( new Vector4(xStart/tileResolution.x,yStart/tileResolution.y,xSize/tileResolution.x,ySize/tileResolution.y));
+            }
+        }
+        int [,] signals = new int[horizontalTilenumber,verticalTilenumber];
+        int startingSignalLine=0;
+        foreach (Vector4 area in areas){
+            int[,] areaSignals = FillArea(new Vector2(area.z,area.w),validShapes, startingSignalLine);
+            for (int i=0;i<area.z;i++){
+                for (int j=0;j<area.w;j++){
+                    Debug.Log($"area: {area},i: {i},j: {j}");
+                    signals[(int)(area.x+i),(int)(area.y+j)]=areaSignals[i,j];
+                    if (areaSignals[i,j]>startingSignalLine){
+                        startingSignalLine=areaSignals[i,j];
+                    }
+                }
+            }
+            startingSignalLine++;
+        }
+        
+        // colora il ledwall
+        for (int i=0; i< horizontalTilenumber; i++)
+        {
+            for (int j = 0; j < verticalTilenumber; j++)
+            {                    
+                tiles[i,j].GetComponent<SpriteRenderer>().color = manager.signalPalette[signals[i,j]%manager.signalPalette.Length];
+                tiles[i,j].GetComponentInChildren<TMP_Text>().text = LetterEncoding(signals[i,j]);
+            }
+        }
     }
     void DrawSignalOldMethod(){
         maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
