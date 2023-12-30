@@ -6,7 +6,7 @@ using StringMath;
 public class ScreenMenu : MonoBehaviour
 {
     public Manager manager;
-    public TMP_InputField inputFieldSizeX, inputFieldSizeY, inputFieldPitch, inputFieldPower, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldStartX, inputFieldStartY;
+    public TMP_InputField inputFieldSizeX, inputFieldSizeY, inputFieldPitch, inputFieldPower, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldStartX, inputFieldStartY, inputFieldResolutionX, inputFieldResolutionY;
     public TMP_Text textMeshPro;
 
     public TMP_Dropdown dropdownSelectScreen;
@@ -269,5 +269,37 @@ public class ScreenMenu : MonoBehaviour
         {
             dropdownSelectScreen.options.Add(new TMP_Dropdown.OptionData() { text = "screen " + (i+1) });
         }
+    }
+
+     public void UpdateSendingResolutionX(string value)
+    {
+        Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value,true);
+        if (value == null)
+        {
+            inputFieldResolutionX.text=screen.sendingMaxResolution.x.ToString();
+            return;
+        }
+        
+        screen.sendingMaxResolution.x = float.Parse(value,CultureInfo.InvariantCulture);
+        inputFieldResolutionX.text=screen.sendingMaxResolution.x.ToString();
+        screen.UpdateLedwall();
+        UpdateInfo(screen);
+    }
+
+    public void UpdateSendingResolutionY(string value)
+    {
+        Screen screen = manager.selectedScreen.GetComponent<Screen>();
+        value = ValidateValue(value,true);
+        if (value == null)
+        {
+            inputFieldResolutionY.text=screen.sendingMaxResolution.y.ToString();
+            return;
+        }
+        
+        screen.sendingMaxResolution.y = float.Parse(value,CultureInfo.InvariantCulture);
+        inputFieldResolutionY.text=screen.sendingMaxResolution.x.ToString();
+        screen.UpdateLedwall();
+        UpdateInfo(screen);
     }
 }

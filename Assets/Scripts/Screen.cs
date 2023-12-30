@@ -7,6 +7,7 @@ public class Screen : MonoBehaviour
     public Vector2 size = new Vector2 (.5f, .5f);
     public Vector2 tileSize = new Vector2 (.5f, .5f);
     public Vector2 tileResolution = new Vector2 (128, 128);
+    public Vector2 sendingMaxResolution = new Vector2 (3840, 2160);
     public float pitch = 3.9f;
     public float tilePowerConsumption = 150;    
     public Vector2 resolution;
@@ -55,7 +56,10 @@ public class Screen : MonoBehaviour
 
         //update startPosition
         transform.position = new Vector3(startPosition.x / 1000.0f * pitch, -startPosition.y / 1000.0f * pitch, 0);
-                
+
+        //update sending card resolution
+        sendingMaxResolution = new Vector2(sendingMaxResolution.x , sendingMaxResolution.y);
+
         RegenerateTiles();
     }
 
@@ -286,7 +290,7 @@ public class Screen : MonoBehaviour
 
     void DrawSignalNewMethod(){        
         
-        Vector2 sendingMaxResolution= new Vector2(3840,2160);
+       // Vector2 sendingMaxResolution= new Vector2(3840,2160);
 
         maxTilesPerSignalLine = (int) (655360/(tileResolution.x * tileResolution.y));
         List<Vector2> validShapes = GenerateShapes(maxTilesPerSignalLine,tileResolution,sendingMaxResolution);
