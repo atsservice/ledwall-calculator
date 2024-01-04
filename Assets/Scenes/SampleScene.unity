@@ -454,8 +454,8 @@ MonoBehaviour:
   inputFieldTileSizeY: {fileID: 17081563}
   inputFieldStartX: {fileID: 334582814}
   inputFieldStartY: {fileID: 372576065}
-  inputFieldResolutionX: {fileID: 0}
-  inputFieldResolutionY: {fileID: 0}
+  inputFieldResolutionX: {fileID: 424901323}
+  inputFieldResolutionY: {fileID: 1392386811}
   textMeshPro: {fileID: 1573523408}
   dropdownSelectScreen: {fileID: 1959926743}
   contentFrame: {fileID: 953219983}

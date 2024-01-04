@@ -24,6 +24,8 @@ public class ScreenMenu : MonoBehaviour
         inputFieldTileSizeY.text = screen.tileSize.y.ToString();
         inputFieldStartX.text = screen.startPosition.x.ToString();
         inputFieldStartY.text = screen.startPosition.y.ToString();
+        inputFieldResolutionX.text = screen.sendingMaxResolution.x.ToString();
+        inputFieldResolutionY.text = screen.sendingMaxResolution.y.ToString();
         UpdateInfo(screen);
         int i = manager.screens.IndexOf(screen) + 1;
         dropdownSelectScreen.value=i;
@@ -50,7 +52,7 @@ public class ScreenMenu : MonoBehaviour
         //cicla tra gli TMP_InputField quando premo TAB, cambiando il focus da uno all'altro        
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            TMP_InputField[] selectableInputFields = { inputFieldSizeX, inputFieldSizeY, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldPitch, inputFieldPower, inputFieldStartX, inputFieldStartY};
+            TMP_InputField[] selectableInputFields = { inputFieldSizeX, inputFieldSizeY, inputFieldTileSizeX, inputFieldTileSizeY, inputFieldPitch, inputFieldPower, inputFieldStartX, inputFieldStartY, inputFieldResolutionX, inputFieldResolutionY};
             int selected = -1;
             for (int i = 0; i < selectableInputFields.Length; i++)
             {
@@ -298,7 +300,7 @@ public class ScreenMenu : MonoBehaviour
         }
         
         screen.sendingMaxResolution.y = float.Parse(value,CultureInfo.InvariantCulture);
-        inputFieldResolutionY.text=screen.sendingMaxResolution.x.ToString();
+        inputFieldResolutionY.text=screen.sendingMaxResolution.y.ToString();
         screen.UpdateLedwall();
         UpdateInfo(screen);
     }

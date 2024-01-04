@@ -57,9 +57,6 @@ public class Screen : MonoBehaviour
         //update startPosition
         transform.position = new Vector3(startPosition.x / 1000.0f * pitch, -startPosition.y / 1000.0f * pitch, 0);
 
-        //update sending card resolution
-        sendingMaxResolution = new Vector2(sendingMaxResolution.x , sendingMaxResolution.y);
-
         RegenerateTiles();
     }
 
